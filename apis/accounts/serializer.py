@@ -2,6 +2,7 @@ from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 from apis.accounts.models import User, UserProfile
 from django.db.transaction import atomic
+from apis.news.serializer import NewsSerializer
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -68,11 +69,12 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['pk','username', 'email', 'profile','password','profile']
+        fields = ['pk','username', 'email', 'profile','password','role']
         extra_kwargs ={'password':{'write_only':True}}
 
     @atomic
     def create(self, validated_data):
+        print(validated_data)
         profile_data = validated_data.pop('profile')
         raw_password = validated_data.pop('password')
         for field in self.REQUIRED_FIELD:
@@ -99,8 +101,18 @@ class UserSerializer(serializers.ModelSerializer):
         instance.last_name              =  validated_data.get("last_name", instance.last_name)
 
         if validated_data.get("password"):
-            instance.set_password(validated_data("password"))
+            instance.set_password(validated_data["password"])
 
         profile_instance.address        =  profile_data.get("address",profile_instance.address)
         profile_instance.profile_pic    =  profile_data.get("profile_pic",profile_instance.profile_pic)
         return instance
+
+
+
+class UserNewsSerializer(serializers.ModelSerializer):
+    newes = NewsSerializer(many=True)
+    
+    class Meta:
+        model = User
+        fields = ['pk','username','newes']  
+
