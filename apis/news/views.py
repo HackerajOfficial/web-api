@@ -9,7 +9,9 @@ from rest_framework.response import Response
 from apis.news.models import News
 from rest_framework import status
 from rest_framework_simplejwt import authentication
-from rest_framework.pagination  import PageNumberPagination
+from common.pagination  import NewsPaginator
+
+
 
 
 class CreateNewsAPIView(CreateAPIView):
@@ -45,4 +47,4 @@ class ListNewsAPIView(ListAPIView):
     serializer_class            =   NewsSerializer
     permission_classes          =   [permissions.AllowAny]
     queryset                    =   News.objects.all()
-    pagination_class            =   PageNumberPagination
+    pagination_class            =   NewsPaginator
